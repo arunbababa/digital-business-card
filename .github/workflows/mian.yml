@@ -1,0 +1,60 @@
+name: CI/CD Pipeline for Firebase
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: 🔧 Node.js をセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+
+      - name: 📦 依存関係をインストール
+        run: npm ci
+
+      - name: 🌎 環境変数を設定（Supabase 用）
+        run: |
+          echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" >> .env
+          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
+        shell: bash
+
+      - name: 🏗️ ビルド
+        run: npm run build
+
+      - name: 🧪 Jest テスト実行
+        run: npm test
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: 🔧 Node.js をセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+
+      - name: 📦 依存関係をインストール
+        run: npm ci
+
+      - name: 🚀 Firebase にデプロイ
+        run: npm run deploy
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
