@@ -13,7 +13,7 @@ const App = () => {
       if (error) {
         console.error("Error fetching skills:", error);
       } else {
-        setSkills(data); // スキルデータを state に保存
+        setSkills(data);
       }
     };
 

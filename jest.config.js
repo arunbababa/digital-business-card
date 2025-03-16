@@ -1,10 +1,18 @@
 export default {
     preset: "ts-jest",
-    testEnvironment: "jest-environment-jsdom",
+    testEnvironment: "jsdom",
+    setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
     transform: {
-    "^.+\\.tsx?$": "ts-jest"
+      "^.+\\.(ts|tsx)$": "ts-jest",
     },
     moduleNameMapper: {
-    "\\.(css|less|scss|sass)$": "identity-obj-proxy"
-    }
-};
+      "\\.(css|less)$": "identity-obj-proxy",
+    },
+    globals: {
+        "ts-jest": {
+          tsconfig: "<rootDir>/tsconfig.app.json", // tsconfig を指定
+        },
+      },
+  };
+  
+  
